@@ -7,7 +7,10 @@ defmodule GoveeLights.MixProject do
       version: "0.1.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      name: "Govee Lights Ex",
+      source_url: "https://github.com/adia-dev/govee-lights-ex",
+      docs: &docs/0
     ]
   end
 
@@ -21,9 +24,16 @@ defmodule GoveeLights.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:req, "~> 0.5.16"}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:req, "~> 0.5.16"},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false, warn_if_outdated: true}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "GoveeLights",
+      logo: "assets/logo.png",
+      extras: ["README.md"]
     ]
   end
 end
