@@ -1,4 +1,4 @@
-# 💡 GoveeLightsEx
+# 💡 GoveeLights
 
 Control your Govee smart lights directly from **Elixir**.
 
@@ -16,7 +16,7 @@ Add to your `mix.exs` dependencies:
 ```elixir
 def deps do
   [
-    {:govee_lights_ex, "~> 0.1.0"}
+    {:govee_lights, "~> 0.1.0"}
   ]
 end
 ```
