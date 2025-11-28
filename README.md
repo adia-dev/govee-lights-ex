@@ -1,5 +1,10 @@
 # 💡 GoveeLights
 
+[![Hex.pm](https://img.shields.io/hexpm/v/govee_lights.svg)](https://hex.pm/packages/govee_lights)
+[![Documentation](https://img.shields.io/badge/hexdocs-docs-blue)](https://hexdocs.pm/govee_lights)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/adia-dev/govee-lights-ex/ci.yml?branch=main)](https://github.com/adia-dev/govee-lights-ex/actions)
+
 Control your Govee smart lights directly from **Elixir**.
 
 This project provides a clean and simple wrapper for the Govee Developer API, allowing you to list devices, control power, adjust brightness, and modify color temperature, all with straightforward, minimal function calls.

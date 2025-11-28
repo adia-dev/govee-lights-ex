@@ -10,22 +10,42 @@ defmodule GoveeLights.MixProject do
       deps: deps(),
       name: "Govee Lights",
       source_url: "https://github.com/adia-dev/govee-lights-ex",
+      description: description(),
+      package: package(),
       docs: &docs/0
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:req, "~> 0.5.16"},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false, warn_if_outdated: true}
+    ]
+  end
+
+  defp description do
+    "Simple Elixir wrapper around the Govee Developer API for listing and controlling lights."
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => "https://github.com/adia-dev/govee-lights-ex"
+      },
+      files: ~w(
+        lib
+        assets
+        mix.exs
+        README.md
+        LICENSE
+      )
     ]
   end
 
