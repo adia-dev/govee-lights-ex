@@ -21,7 +21,7 @@ Add to your `mix.exs` dependencies:
 ```elixir
 def deps do
   [
-    {:govee_lights, "~> 0.1.0"}
+    {:govee_lights, "~> 0.1.1"}
   ]
 end
 ```
