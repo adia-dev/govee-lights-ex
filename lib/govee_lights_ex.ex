@@ -112,6 +112,21 @@ defmodule GoveeLights do
   def set_temperature(device, model, value),
     do: exec_command(device, model, "colorTem", value)
 
+  @doc """
+  Set the color of a device (in RGB format).
+
+  Returns `{:ok, message}` on success or `{:error, reason}` on failure.
+
+  ## Examples:
+      iex> GoveeLights.set_color("0A:0A:0A:0A:0A:0A:0A:0A", "H6008", %{r: 255, g: 0, b: 0})
+      {:ok, "Device state updated"}
+  """
+  def set_color(device, model, %{r: r, g: g, b: b}),
+    do: exec_command(device, model, "color", %{r: r, g: g, b: b})
+
+  def set_color(_, _, _),
+    do: {:error, "Invalid color format, expected: %{r: integer(), g: integer(), b: integer()}"}
+
   defp exec_command(device, model, command, value) do
     api_key = api_key!()
 
