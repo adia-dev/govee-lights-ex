@@ -12,7 +12,8 @@ defmodule GoveeLights.MixProject do
       source_url: "https://github.com/adia-dev/govee-lights-ex",
       description: description(),
       package: package(),
-      docs: &docs/0
+      docs: &docs/0,
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -56,4 +57,7 @@ defmodule GoveeLights.MixProject do
       extras: ["README.md"]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

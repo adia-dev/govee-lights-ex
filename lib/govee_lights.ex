@@ -15,6 +15,7 @@ defmodule GoveeLights do
   issue or pull request on GitHub: https://github.com/adia-dev/govee-lights-ex
   """
 
+  @http_client Application.compile_env(:govee_lights, :http_client, GoveeLights.HTTPClient)
   @govee_api_key "GOVEE_API_KEY"
   @govee_base_url "https://developer-api.govee.com/v1"
   @govee_endpoints [devices: "/devices", device_control: "/devices/control"]
@@ -45,7 +46,7 @@ defmodule GoveeLights do
   def devices do
     api_key = api_key!()
 
-    case Req.get(
+    case @http_client.get(
            url: "#{@govee_base_url}#{@govee_endpoints[:devices]}",
            headers: %{govee_api_key: api_key}
          ) do
@@ -130,7 +131,7 @@ defmodule GoveeLights do
   defp exec_command(device, model, command, value) do
     api_key = api_key!()
 
-    case Req.put(
+    case @http_client.put(
            url: "#{@govee_base_url}#{@govee_endpoints[:device_control]}",
            headers: %{govee_api_key: api_key},
            json: %{
@@ -160,7 +161,7 @@ defmodule GoveeLights do
   end
 
   defp api_key!() do
-    case System.get_env(@govee_api_key) do
+    case Application.get_env(:govee_lights, :api_key) || System.get_env(@govee_api_key) do
       nil ->
         exit("#{@govee_api_key} must be set.")
 
