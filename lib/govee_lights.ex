@@ -23,7 +23,11 @@ defmodule GoveeLights do
                     :base_url,
                     "https://developer-api.govee.com/v1"
                   )
-  @govee_endpoints [devices: "/devices", device_control: "/devices/control"]
+  @govee_endpoints [
+    devices: "/devices",
+    device_control: "/devices/control",
+    device_state: "/devices/state"
+  ]
 
   @doc """
   Retrieve all devices associated with your Govee account.
@@ -57,6 +61,41 @@ defmodule GoveeLights do
          ) do
       {:ok, response} ->
         response.body["data"]["devices"]
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  @doc """
+  Retrieve the current state of a device.
+
+  Returns a map with device details, or `{:error, reason}` if the request fails.
+
+  ## Examples
+
+      iex> GoveeLights.device_state("0A:0A:0A:0A:0A:0A:0A:0A", "H6008")
+      %{
+        "device" => "0D:A9:D0:C9:07:33:3A:CA",
+        "model" => "H6008",
+        "properties" => [
+          %{"online" => true},
+          %{"powerState" => "on"},
+          %{"brightness" => 10},
+          %{"color" => %{"b" => 156, "g" => 242, "r" => 36}}
+        ]
+      }
+  """
+  def device_state(device, model) do
+    api_key = api_key!()
+
+    case @http_client.get(
+           url: "#{@govee_base_url}#{@govee_endpoints[:device_state]}",
+           headers: %{govee_api_key: api_key},
+           params: [device: device, model: model]
+         ) do
+      {:ok, response} ->
+        response.body["data"]
 
       {:error, error} ->
         {:error, error}

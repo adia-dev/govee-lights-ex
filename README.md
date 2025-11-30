@@ -21,7 +21,7 @@ Add to your `mix.exs` dependencies:
 ```elixir
 def deps do
   [
-    {:govee_lights, "~> 0.1.2"}
+    {:govee_lights, "~> 0.1.3"}
   ]
 end
 ```
@@ -55,14 +55,33 @@ You can request a key here:
 iex> GoveeLights.devices()
 [
   %{
-    "device" => "AA:BB:CC:DD:EE:FF:11:22",
-    "deviceName" => "Bedroom Lightbulb",
-    "model" => "H6008",
     "controllable" => true,
+    "device" => "0A:0A:0A:0A:0A:0A:0A:0A",
+    "deviceName" => "User’s room",
+    "model" => "H6008",
+    "properties" => %{
+      "colorTem" => %{"range" => %{"max" => 6500, "min" => 2700}}
+    },
     "retrievable" => true,
     "supportCmds" => ["turn", "brightness", "color", "colorTem"]
   }
 ]
+```
+
+### Device State
+
+```elixir
+iex> GoveeLights.device_state("AA:BB:CC:DD:EE:FF:11:22", "H6008")
+%{
+  "device" => "AA:BB:CC:DD:EE:FF:11:22",
+  "model" => "H6008",
+  "properties" => [
+    %{"online" => true},
+    %{"powerState" => "on"},
+    %{"brightness" => 10},
+    %{"color" => %{"b" => 156, "g" => 242, "r" => 36}}
+  ]
+}
 ```
 
 ---
@@ -109,8 +128,8 @@ GoveeLights.set_temperature("AA:BB:CC:DD:EE:FF:11:22", "H6008", 3000)
 ## 🛠 Development
 
 ```bash
-mix test         # run test suite
-mix docs         # generate documentation
+mix test
+mix docs
 ```
 
 ---
