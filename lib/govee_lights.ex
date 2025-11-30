@@ -16,8 +16,13 @@ defmodule GoveeLights do
   """
 
   @http_client Application.compile_env(:govee_lights, :http_client, GoveeLights.HTTPClient)
+
   @govee_api_key "GOVEE_API_KEY"
-  @govee_base_url "https://developer-api.govee.com/v1"
+  @govee_base_url Application.compile_env(
+                    :govee_lights,
+                    :base_url,
+                    "https://developer-api.govee.com/v1"
+                  )
   @govee_endpoints [devices: "/devices", device_control: "/devices/control"]
 
   @doc """
