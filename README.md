@@ -56,7 +56,7 @@ iex> GoveeLights.devices()
 [
   %{
     "controllable" => true,
-    "device" => "0A:0A:0A:0A:0A:0A:0A:0A",
+    "device" => "AA:BB:CC:DD:EE:FF:11:22",
     "deviceName" => "User’s room",
     "model" => "H6008",
     "properties" => %{

@@ -13,6 +13,38 @@ defmodule GoveeLights do
 
   If you have questions, suggestions or want to contribute, please open an
   issue or pull request on GitHub: https://github.com/adia-dev/govee-lights-ex
+
+  ## Configuration
+
+  You can configure the client by setting the `:http_client` option in your
+  `config.exs` file:
+
+      config :govee_lights, http_client: MyHTTPClient
+
+  The default client is `GoveeLights.HTTPClient`, which uses the `req` library
+  to make HTTP requests.
+
+  If you want to use a different HTTP client, you can create a module that
+  implements the `GoveeLights.HTTPClient` behaviour and set it as the client.
+
+  For example, if you want to use the `Tesla` library, you can create a module
+  like this:
+
+      defmodule MyHTTPClient do
+        @behaviour GoveeLights.HTTPClient
+
+        def get(url, headers, params) do
+          Tesla.get(url, headers, params)
+        end
+
+        def put(url, headers, json) do
+          Tesla.put(url, headers, json)
+        end
+      end
+
+  Then, set it as the client in your `config.exs` file:
+
+      config :govee_lights, http_client: MyHTTPClient
   """
 
   @http_client Application.compile_env(:govee_lights, :http_client, GoveeLights.HTTPClient)
@@ -41,7 +73,7 @@ defmodule GoveeLights do
       [
         %{
           "controllable" => true,
-          "device" => "0A:0A:0A:0A:0A:0A:0A:0A",
+          "device" => "AA:BB:CC:DD:EE:FF:11:22",
           "deviceName" => "User’s room",
           "model" => "H6008",
           "properties" => %{
@@ -74,9 +106,9 @@ defmodule GoveeLights do
 
   ## Examples
 
-      iex> GoveeLights.device_state("0A:0A:0A:0A:0A:0A:0A:0A", "H6008")
+      iex> GoveeLights.device_state("AA:BB:CC:DD:EE:FF:11:22", "H6008")
       %{
-        "device" => "0D:A9:D0:C9:07:33:3A:CA",
+        "device" => "AA:BB:CC:DD:EE:FF:11:22",
         "model" => "H6008",
         "properties" => [
           %{"online" => true},
@@ -109,7 +141,7 @@ defmodule GoveeLights do
 
   ## Examples
 
-      iex> GoveeLights.turn_on("0A:0A:0A:0A:0A:0A:0A:0A", "H6008")
+      iex> GoveeLights.turn_on("AA:BB:CC:DD:EE:FF:11:22", "H6008")
       {:ok, "Device state updated"}
   """
   def turn_on(device, model), do: exec_command(device, model, "turn", "on")
@@ -121,7 +153,7 @@ defmodule GoveeLights do
 
   ## Examples
 
-      iex> GoveeLights.turn_off("0A:0A:0A:0A:0A:0A:0A:0A", "H6008")
+      iex> GoveeLights.turn_off("AA:BB:CC:DD:EE:FF:11:22", "H6008")
       {:ok, "Device state updated"}
   """
   def turn_off(device, model), do: exec_command(device, model, "turn", "off")
@@ -135,7 +167,7 @@ defmodule GoveeLights do
 
   ## Examples
 
-      iex> GoveeLights.set_brightness("0A:0A:0A:0A:0A:0A:0A:0A", "H6008", 15)
+      iex> GoveeLights.set_brightness("AA:BB:CC:DD:EE:FF:11:22", "H6008", 15)
       {:ok, "Device state updated"}
   """
   def set_brightness(device, model, value),
@@ -151,7 +183,7 @@ defmodule GoveeLights do
 
   ## Examples
 
-      iex> GoveeLights.set_temperature("0A:0A:0A:0A:0A:0A:0A:0A", "H6008", 2700)
+      iex> GoveeLights.set_temperature("AA:BB:CC:DD:EE:FF:11:22", "H6008", 2700)
       {:ok, "Device state updated"}
   """
   def set_temperature(device, model, value),
@@ -163,7 +195,7 @@ defmodule GoveeLights do
   Returns `{:ok, message}` on success or `{:error, reason}` on failure.
 
   ## Examples:
-      iex> GoveeLights.set_color("0A:0A:0A:0A:0A:0A:0A:0A", "H6008", %{r: 255, g: 0, b: 0})
+      iex> GoveeLights.set_color("AA:BB:CC:DD:EE:FF:11:22", "H6008", %{r: 255, g: 0, b: 0})
       {:ok, "Device state updated"}
   """
   def set_color(device, model, %{r: r, g: g, b: b}),

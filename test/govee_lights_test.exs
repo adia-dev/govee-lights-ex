@@ -6,7 +6,7 @@ defmodule GoveeLightsTest do
     assert GoveeLights.devices() == [
              %{
                "controllable" => true,
-               "device" => "0A:0A:0A:0A:0A:0A:0A:0A",
+               "device" => "AA:BB:CC:DD:EE:FF:11:22",
                "deviceName" => "User’s room",
                "model" => "H6008",
                "properties" => %{
@@ -20,6 +20,6 @@ defmodule GoveeLightsTest do
 
   test "turn_on/2 delegates to HTTP client and returns ok" do
     assert {:ok, "Device state updated"} =
-             GoveeLights.turn_on("0A:0A:0A:0A:0A:0A:0A:0A", "H6008")
+             GoveeLights.turn_on("AA:BB:CC:DD:EE:FF:11:22", "H6008")
   end
 end
