@@ -139,17 +139,17 @@ mix docs
 
 ### Internal Enhancements
 
-[ ] **Device caching layer**
-[ ] reduces API calls dramatically
-[ ] TTL-based refresh or manual invalidation
+- [ ] **Device caching layer**
+- [ ] reduces API calls dramatically
+- [ ] TTL-based refresh or manual invalidation
 
-[ ] **Better error messages**
-[ ] contextual failures (`device not found`, `brightness out of range`, etc.)
-[ ] include Govee error metadata
+- [ ] **Better error messages**
+- [ ] contextual failures (`device not found`, `brightness out of range`, etc.)
+- [ ] include Govee error metadata
 
-[ ] Improved fault-tolerance
-[ ] automatic retries for transient network errors
-[ ] optional backoff mechanism
+- [ ] Improved fault-tolerance
+- [ ] automatic retries for transient network errors
+- [ ] optional backoff mechanism
 
 ### Feature Expansion
 
