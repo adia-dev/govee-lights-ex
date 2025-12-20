@@ -5,28 +5,29 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/adia-dev/govee-lights-ex/ci.yml?branch=main)](https://github.com/adia-dev/govee-lights-ex/actions)
 
-Control your Govee smart lights directly from **Elixir**.
+Control your **Govee smart lights** directly from **Elixir**.
 
-This project provides a clean and simple wrapper for the Govee Developer API, allowing you to list devices, control power, adjust brightness, and modify color temperature, all with straightforward, minimal function calls.
+This library provides a typed, documented wrapper around the **Govee Developer API**.
+Instead of working with raw JSON maps, you interact with domain structs such as
+`GoveeLights.Device` and `GoveeLights.Device.State`.
 
-> ⚠️ This library is **unofficial** and not affiliated with Govee.  
-> It simply gives Elixir developers a nice, ergonomic way to talk to the Govee API.
+> ⚠️ This library is **unofficial** and not affiliated with Govee.
 
 ---
 
 ## 🚀 Installation
 
-Add to your `mix.exs` dependencies:
+Add the dependency to your `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:govee_lights, "~> 0.1.4"}
+    {:govee_lights, "~> 0.2.0"}
   ]
 end
 ```
 
-Fetch deps:
+Fetch dependencies:
 
 ```bash
 mix deps.get
@@ -36,10 +37,18 @@ mix deps.get
 
 ## 🔑 API Key
 
-You must export your Govee API key before usage:
+You must provide a Govee API key before using the API.
+
+Either via environment variable:
 
 ```bash
 export GOVEE_API_KEY="YOUR_KEY"
+```
+
+Or via application configuration:
+
+```elixir
+config :govee_lights, api_key: "YOUR_KEY"
 ```
 
 You can request a key here:
@@ -47,82 +56,158 @@ You can request a key here:
 
 ---
 
-## 📘 Usage Examples
+## 📘 Usage
 
-### List devices
-
-```elixir
-iex> GoveeLights.devices()
-[
-  %{
-    "controllable" => true,
-    "device" => "AA:BB:CC:DD:EE:FF:11:22",
-    "deviceName" => "User’s room",
-    "model" => "H6008",
-    "properties" => %{
-      "colorTem" => %{"range" => %{"max" => 6500, "min" => 2700}}
-    },
-    "retrievable" => true,
-    "supportCmds" => ["turn", "brightness", "color", "colorTem"]
-  }
-]
-```
-
-### Device State
+All interaction happens through **`GoveeLights.Api`**.
 
 ```elixir
-iex> GoveeLights.device_state("AA:BB:CC:DD:EE:FF:11:22", "H6008")
-%{
-  "device" => "AA:BB:CC:DD:EE:FF:11:22",
-  "model" => "H6008",
-  "properties" => [
-    %{"online" => true},
-    %{"powerState" => "on"},
-    %{"brightness" => 10},
-    %{"color" => %{"b" => 156, "g" => 242, "r" => 36}}
-  ]
-}
+alias GoveeLights.Api
 ```
 
 ---
 
-### Power Control
+## 📦 List devices
+
+Retrieve all devices associated with your account as typed structs:
 
 ```elixir
-GoveeLights.turn_on("AA:BB:CC:DD:EE:FF:11:22", "H6008")
-GoveeLights.turn_off("AA:BB:CC:DD:EE:FF:11:22", "H6008")
+iex> {:ok, devices} = Api.devices()
+iex> Enum.all?(devices, &match?(%GoveeLights.Device{}, &1))
+true
+```
+
+Each `%Device{}` contains metadata, properties, and a normalized state field.
+
+You can also use the bang variant:
+
+```elixir
+iex> devices = Api.devices!()
 ```
 
 ---
 
-### Brightness (0–100)
+## 🔍 Device state
+
+Fetch the current state of a device:
 
 ```elixir
-GoveeLights.set_brightness("AA:BB:CC:DD:EE:FF:11:22", "H6008", 50)
+iex> {:ok, state} =
+...>   Api.device_state("AA:BB:CC:DD:EE:FF:11:22", "H6008")
+
+iex> state.on
+true
+
+iex> state.brightness
+10
+
+iex> state.color
+%{r: 36, g: 242, b: 156}
+```
+
+The result is a `%GoveeLights.Device.State{}` struct.
+Missing values are represented as `:unknown`.
+
+Bang variant:
+
+```elixir
+iex> state = Api.device_state!("AA:BB:CC:DD:EE:FF:11:22", "H6008")
 ```
 
 ---
 
-### Color Temperature
+## 🔌 Power control
+
+Turn a device on or off:
 
 ```elixir
-# values differ per model → check devices/0 properties
-GoveeLights.set_temperature("AA:BB:CC:DD:EE:FF:11:22", "H6008", 3000)
+Api.turn_on("AA:BB:CC:DD:EE:FF:11:22", "H6008")
+Api.turn_off("AA:BB:CC:DD:EE:FF:11:22", "H6008")
+```
+
+Both return:
+
+```elixir
+{:ok, :updated}
+```
+
+Bang variants are also available:
+
+```elixir
+Api.turn_on!("AA:BB:CC:DD:EE:FF:11:22", "H6008")
 ```
 
 ---
 
-## 🧠 Notes & Tips
+## 🔆 Brightness (0–100)
 
-| Feature                | Status              |
-| ---------------------- | ------------------- |
-| Device listing         | ✔️ `devices/0`      |
-| Device state           | ✔️ `device_state/2` |
-| Power control          | ✔️ on/off           |
-| Brightness             | ✔️ 0–100            |
-| Temperature            | ✔️ Kelvin           |
-| RGB color support      | planned             |
-| Scene / effect control | planned             |
+```elixir
+Api.set_brightness("AA:BB:CC:DD:EE:FF:11:22", "H6008", 50)
+```
+
+Invalid values return structured errors:
+
+```elixir
+{:error, {:invalid_command, "brightness", 200}}
+```
+
+---
+
+## 🌡 Color temperature (Kelvin)
+
+```elixir
+Api.set_temperature("AA:BB:CC:DD:EE:FF:11:22", "H6008", 3000)
+```
+
+Supported ranges depend on the device model and can be inspected via `Api.devices/0`.
+
+---
+
+## 🎨 RGB color
+
+```elixir
+Api.set_color(
+  "AA:BB:CC:DD:EE:FF:11:22",
+  "H6008",
+  %{r: 255, g: 0, b: 0}
+)
+```
+
+Values must be integers in `0..255`.
+
+---
+
+## 💥 Bang vs non-bang APIs
+
+All major functions come in two forms:
+
+| Function | Behavior                                          |
+| -------- | ------------------------------------------------- |
+| `foo/…`  | returns `{:ok, value}` or `{:error, reason}`      |
+| `foo!/…` | returns `value` or raises `GoveeLights.Api.Error` |
+
+Example:
+
+```elixir
+Api.device_state!(device, model)
+```
+
+Raises `GoveeLights.Api.Error` if the request or decoding fails.
+
+---
+
+## ⚠️ Errors
+
+Non-bang functions return structured error tuples such as:
+
+* `{:http_error, reason}`
+* `{:decode_error, data}`
+* `{:device_error, raw, reason}`
+* `{:state_error, raw, reason}`
+* `{:command_failed, command, value, code, message}`
+* `{:invalid_command, command, value}`
+
+Bang variants raise `GoveeLights.Api.Error`, which contains the original error tuple in
+`exception.reason`.
 
 ---
 
@@ -135,36 +220,25 @@ mix docs
 
 ---
 
-## 📌 Planned Improvements / TODO
+## 📌 Roadmap
 
-### Internal Enhancements
+### Internal
 
-- [ ] **Device caching layer**
-- [ ] reduces API calls dramatically
-- [ ] TTL-based refresh or manual invalidation
+* Device caching layer (TTL / manual invalidation)
+* Improved contextual errors
+* Retry & backoff for transient HTTP failures
 
-- [ ] **Better error messages**
-- [ ] contextual failures (`device not found`, `brightness out of range`, etc.)
-- [ ] include Govee error metadata
+### Features
 
-- [ ] Improved fault-tolerance
-- [ ] automatic retries for transient network errors
-- [ ] optional backoff mechanism
-
-### Feature Expansion
-
-- Add full RGB color control
-- Scene / Dynamic effect control
-- Presets & automation helpers
-- More test coverage + mock API adapter
-
-Create an issue if you'd like to help or suggest something.
+* Full RGB color workflows
+* Scene / effect control
+* Presets & automation helpers
+* Extended state modeling
 
 ---
 
 ## ❤️ Contributing
 
-Pull requests are welcome!
-Issues, ideas, feedback, all appreciated.
+Issues and pull requests are welcome.
 
-If you enjoy this library, leave a ⭐ on the repo •͡˘㇁•͡˘
+If you find this useful, consider leaving a ⭐ on the repository: it helps a lot !!!

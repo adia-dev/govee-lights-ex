@@ -4,7 +4,7 @@ defmodule GoveeLights.MixProject do
   def project do
     [
       app: :govee_lights,
-      version: "0.1.4",
+      version: "0.2.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -52,9 +52,9 @@ defmodule GoveeLights.MixProject do
 
   defp docs do
     [
-      main: "GoveeLights",
+      main: "GoveeLights.Api",
       logo: "assets/logo.png",
-      extras: ["README.md"]
+      extras: ["README.md", "CHANGELOG.md", "BREAKING_CHANGES.md", "LICENSE"]
     ]
   end
 
